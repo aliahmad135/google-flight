@@ -1,5 +1,5 @@
 import React from "react";
-import { Plane, Clock, ArrowRight } from "lucide-react";
+import { Plane, Clock, ArrowRight, Star, Calendar } from "lucide-react";
 
 const FlightCard = ({ flight }) => {
   const {
@@ -12,7 +12,21 @@ const FlightCard = ({ flight }) => {
     duration = "",
     stopInfo = "",
     aircraft = "",
+    score,
+    farePolicy,
+    segments = [],
   } = flight || {};
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'short',
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer">
@@ -25,6 +39,13 @@ const FlightCard = ({ flight }) => {
           <div>
             <h3 className="font-semibold text-gray-900">{airline}</h3>
             <p className="text-sm text-gray-600">{flightNumber}</p>
+            {/* Show score if available (v2 feature) */}
+            {score && (
+              <div className="flex items-center space-x-1 mt-1">
+                <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                <span className="text-xs text-gray-500">{(score * 100).toFixed(0)}% match</span>
+              </div>
+            )}
           </div>
         </div>
         <div className="text-right">
@@ -42,6 +63,11 @@ const FlightCard = ({ flight }) => {
           </div>
           <div className="text-sm text-gray-600">{departure.airport}</div>
           <div className="text-xs text-gray-500">{departure.city}</div>
+          {departure.date && (
+            <div className="text-xs text-gray-400 mt-1">
+              {formatDate(departure.date)}
+            </div>
+          )}
         </div>
 
         {/* Flight Path */}
@@ -60,6 +86,11 @@ const FlightCard = ({ flight }) => {
           <div className="text-2xl font-bold text-gray-900">{arrival.time}</div>
           <div className="text-sm text-gray-600">{arrival.airport}</div>
           <div className="text-xs text-gray-500">{arrival.city}</div>
+          {arrival.date && (
+            <div className="text-xs text-gray-400 mt-1">
+              {formatDate(arrival.date)}
+            </div>
+          )}
         </div>
       </div>
 
@@ -76,6 +107,19 @@ const FlightCard = ({ flight }) => {
           <span>{aircraft}</span>
         </div>
       </div>
+
+      {/* Fare Policy (v2 feature) */}
+      {farePolicy && (
+        <div className="bg-gray-50 rounded-lg p-3 mb-4">
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <Calendar className="w-4 h-4" />
+            <span className="font-medium">Fare Policy:</span>
+            <span>{farePolicy.isChangeAllowed ? "Changes allowed" : "No changes"}</span>
+            <span>•</span>
+            <span>{farePolicy.isCancellationAllowed ? "Cancellation allowed" : "No cancellation"}</span>
+          </div>
+        </div>
+      )}
 
       {/* Action Button */}
       <div className="flex justify-end">

@@ -12,7 +12,7 @@ app.use(cors());
 app.get("/api/search-flights", async (req, res) => {
   try {
     const response = await axios.get(
-      "https://sky-scrapper.p.rapidapi.com/api/v1/flights/searchFlights",
+      "https://sky-scrapper.p.rapidapi.com/api/v2/flights/searchFlights",
       {
         params: req.query,
         headers: {
